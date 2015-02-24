@@ -14,20 +14,12 @@ M = imread('lena_gray_256.tif');
 [sv sh] = size(M);*/
 
 
-void fenc(int *M, int *T)
+void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 {
 	int *M1, *temp, *D, *bigM, *temp2, *R;
-	
-	int sv, sh;
-	sv = 0;
-	sh = 0;
 
 	//Begin batch runs
 	int min0 = 100;
-	int rsize = 4;
-	int nd, nr;
-	nd = (sv / rsize) / 2;
-	nr = sv / rsize;
 
 	//Scale the Domain Blocks
 	M = (int*)malloc(sv * sh * sizeof(int));
@@ -62,22 +54,22 @@ void fenc(int *M, int *T)
 			j1 = j*rsize;
 			j2 = (j + 1)*rsize - 1;
 			maccess(M1, D, i1, i2, j1, j2);
-			msave(D, bigM, i1, i2, j1, j2, 0);
+			msave(D, bigM, i1, i2, j1, j2, 0, 8);
 			rotmat(D, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 1);
+			msave(temp, bigM, i1, i2, j1, j2, 1, 8);
 			rotmat(temp, temp2);
-			msave(temp2, bigM, i1, i2, j1, j2, 2);
+			msave(temp2, bigM, i1, i2, j1, j2, 2, 8);
 			rotmat(temp2, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 3);
+			msave(temp, bigM, i1, i2, j1, j2, 3, 8);
 			fliph(D, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 4);
+			msave(temp, bigM, i1, i2, j1, j2, 4, 8);
 			flipv(D, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 5);
+			msave(temp, bigM, i1, i2, j1, j2, 5, 8);
 			transpose(D, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 6);
+			msave(temp, bigM, i1, i2, j1, j2, 6, 8);
 			rotmat(temp, temp2);
 			rotmat(temp2, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 7);
+			msave(temp, bigM, i1, i2, j1, j2, 7, 8);
 		}
 	}
 	free(D);
@@ -97,7 +89,7 @@ void fenc(int *M, int *T)
 			l1 = l*rsize;
 			l2 = (l + 1)*rsize - 1;
 			maccess(M1, R, k1, k2, l1, l2);
-			off = avg_matrix(R);
+			off = mavg(R);
 			// Initialize error to large value
 			dmin = (int)pow(10, 6);
 			i0 = 0;
@@ -117,7 +109,7 @@ void fenc(int *M, int *T)
 					{
 						for (int m = 0; m < 8; m++)
 						{
-							maccess(bigM, D, i1, i2, j1, j2, m);
+							maccess(bigM, D, i1, i2, j1, j2, m, 8);
 							scale(D, s[n]);
 							del_g = off - avg_matrix(D);
 							increment(D, del_g);

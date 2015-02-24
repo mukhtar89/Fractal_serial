@@ -14,24 +14,15 @@ M = imread('lena_gray_256.tif');
 [sv sh] = size(M);*/
 
 
-void fdec(int *R, int *T)
+void fdec(int *R, int *T, int rsize, int nd, int nr, int sv, int sh)
 {
 	int *M, *M1, *temp, *D, *bigM, *temp2;
-
-	int sv, sh;
-	sv = 0;
-	sh = 0;
 
 	M = (int*)malloc(sv * sh * sizeof(int));
 	ones(M, 100);
 
 	//Begin batch runs
 	int min0 = 100;
-	int rsize = 4;
-	int nd, nr;
-	nd = (sv / rsize) / 2;
-	nr = sv / rsize;
-
 
 	//Scale the Domain Blocks
 	M1 = (int*)malloc((int)pow(rsize*nd, 2) * sizeof(int));
