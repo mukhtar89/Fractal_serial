@@ -3,6 +3,9 @@
 #include <iostream>
 #include <conio.h>
 
+#include "fenc.cpp"
+#include "fdec.cpp"
+
 using namespace cv;
 using namespace std;
 
@@ -20,7 +23,7 @@ int main(int argc, const char** argv)
 	}
 
 	int count = 0;
-	int *r, *g, *b;
+	int *r, *g, *b, *Tr, *Tb, *Tg;
 	r = (int*)malloc(img.total()*sizeof(int));
 	b = (int*)malloc(img.total()*sizeof(int));
 	g = (int*)malloc(img.total()*sizeof(int));
@@ -48,6 +51,15 @@ int main(int argc, const char** argv)
 		system("pause");
 		return -1;
 	}
+
+	fenc(r, Tr);
+	fenc(b, Tb);
+	fenc(g, Tg);
+
+
+
+
+
 
 	Mat A(img.rows, img.cols, CV_8UC3, Scalar(0, 0, 0));
 

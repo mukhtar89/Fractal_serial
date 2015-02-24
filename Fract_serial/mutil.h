@@ -31,3 +31,7 @@ void diff(int *A, int *B, int *C); //each element of A-B = C
 void msquare(int *A, int *B); //B = A^2
 
 int msum(int *A); //Sum of all elements of A
+
+int ones(int *A, int k); //initialize Array A with scalar 'k'
+
+void matsum(int *A, int *B, int *C);  // add array A + B = C
