@@ -35,6 +35,7 @@ void msave(int *A, int *R, int a1, int a2, int b1, int b2)
 int avg_matrix(int *R)
 {
 	int Rsize = sizeof(R);
+	Rsize = sqrt(Rsize);
 	int average = 0;
 	for (int x = 0; x<Rsize; x++)
 		for (int y = 0; y<Rsize; y++)

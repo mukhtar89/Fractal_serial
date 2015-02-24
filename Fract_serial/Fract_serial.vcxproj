@@ -156,6 +156,7 @@
     <ClCompile Include="fenc.cpp" />
     <ClCompile Include="mutil.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="fdec.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mutil.h" />

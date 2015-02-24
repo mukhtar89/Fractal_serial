@@ -28,7 +28,7 @@ void increment(int *D, float k); //increment each matrix element with k
 
 void diff(int *A, int *B, int *C); //each element of A-B = C
 
-void msquare(int *A, int *B); //B = A^2
+void msquare(int *A, int *B); //B = A.^2
 
 int msum(int *A); //Sum of all elements of A
 
