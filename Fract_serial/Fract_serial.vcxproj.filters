@@ -15,10 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Fract_ser.cpp">
+    <ClCompile Include="mutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mutil.cpp">
+    <ClCompile Include="fenc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

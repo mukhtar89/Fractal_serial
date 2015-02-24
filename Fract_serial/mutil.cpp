@@ -25,7 +25,7 @@ void msave(int *A, int *R, int a1, int a2, int b1, int b2, int c)
 			R[((a - a1)*(b2 - b1) + (b - b1))] = A[(a*(b2 - b1) + b)];
 }
 
-void msave(int *A, int *R, int a1, int a2, int b1, int b2, int c)
+void msave(int *A, int *R, int a1, int a2, int b1, int b2)
 {
 	for (int a = a1; a <= a2; a++)
 		for (int b = b1; b <= b2; b++)
@@ -40,5 +40,6 @@ int avg_matrix(int *R)
 		for (int y = 0; y<Rsize; y++)
 			average += R[(x*Rsize) + y];
 	average /= ((int)pow(Rsize, 2));
+	return average;
 }
 
