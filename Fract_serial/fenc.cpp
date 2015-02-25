@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <conio.h>
 #include <math.h>
+#include <malloc.h>
 
 #include "mutil.h"
 
@@ -21,6 +22,10 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 	//Begin batch runs
 	int min0 = 100;
 
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 2; j++)
+			cout << "temp " << i << j << " = " << temp[(i * 2 + j)] << "\t";
+
 	//Scale the Domain Blocks
 	M = (int*)malloc(sv * sh * sizeof(int));
 	M1 = (int*)malloc((int)pow(rsize*nd,2) * sizeof(int));
@@ -30,10 +35,17 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 		for (int j = 0; j < rsize*nd; j++)
 		{
 			maccess(M, temp, i*2, i*2+1, j*2, j*2+1);
-			M1[((i*rsize*nd) + j)] = avg_matrix(temp);
+			/*for (int i = 0; i < 2; i++)
+				for (int j = 0; j < 2; j++)
+					cout << "temp " << i << j << " = " << temp[(i*2 + j)] << "\t";*/
+			M1[((i*rsize*nd) + j)] = mavg(temp);
 		}
 	}
 	free(temp);
+
+	/*for (int i = 0; i < rsize*nd; i++)
+		for (int j = 0; j < rsize*nd; j++)
+			cout << "M1 " << i << j << " = " << M1[(i*rsize*nd + j)] << "\t";*/
 
 	//Matrix of 4 possible scalings to transform grayscale
 	float s[4] = { 0.45, 0.60, 0.80, 1.00 };
@@ -72,14 +84,20 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 			msave(temp, bigM, i1, i2, j1, j2, 7, 8);
 		}
 	}
-	free(D);
+	//free(D);
+	cout << "BigM created\n";
+	/*for (int i = 0; i < nd*rsize; i++)
+		for (int j = 0; j < nd*rsize; j++)
+			for (int k = 0; k < 8; k++)
+				cout << "BigM " << i << j << k << " = " << bigM[(i + nd*rsize*(j + 8 * k))] << "\t";*/
+
 
 	// Compare the range blocks and scaled domain blocks.
 	// k, l - used to cycle through blocks Rkl.
 	int k1, k2, l1, l2, off, dmin, i0, j0, m0, s0, g0, del_g, sum_dist, dist;
 	R = (int*)malloc(rsize * rsize * sizeof(int));
 	D = (int*)malloc(rsize * rsize * sizeof(int));
-	T = (int*)malloc(rsize * rsize * 5 * sizeof(int));
+	T = (int*)malloc(nd * nd * 5 * sizeof(int));
 	for (int k = 0; k < nd; k++)
 	{
 		k1 = k*rsize;
@@ -111,7 +129,7 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 						{
 							maccess(bigM, D, i1, i2, j1, j2, m, 8);
 							scale(D, s[n]);
-							del_g = off - avg_matrix(D);
+							del_g = off - mavg(D);
 							increment(D, del_g);
 							diff(R, D, temp);
 							msquare(temp, temp2);
@@ -137,4 +155,5 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 			T[(k + nd*(l + 5 * 4))] = g0;
 		}
 	}
+	cout << "T created\n";
 }

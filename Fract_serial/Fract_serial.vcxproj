@@ -159,6 +159,8 @@
     <ClCompile Include="fdec.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fdec.h" />
+    <ClInclude Include="fenc.h" />
     <ClInclude Include="mutil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

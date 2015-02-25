@@ -5,8 +5,8 @@
 #include <fstream>
 #include <malloc.h>
 
-#include "fenc.cpp"
-#include "fdec.cpp"
+#include "fenc.h"
+#include "fdec.h"
 
 using namespace cv;
 using namespace std;
@@ -177,5 +177,3 @@ int main(int argc, const char** argv)
 
 	return 0;
 }
-
-

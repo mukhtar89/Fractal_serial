@@ -32,7 +32,7 @@ void fdec(int *R, int *T, int rsize, int nd, int nr, int sv, int sh)
 		for (int j = 0; j < rsize*nd; j++)
 		{
 			maccess(M, temp, i*2, i*2+1, j*2, j*2+1);
-			M1[((i*rsize*nd) + j)] = avg_matrix(temp);
+			M1[((i*rsize*nd) + j)] = mavg(temp);
 		}
 	}
 	free(temp);
