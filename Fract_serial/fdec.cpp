@@ -79,9 +79,7 @@ void fdec(int *R, int *T, int rsize, int nd, int nr, int sv, int sh)
 	// Compare the range blocks and scaled domain blocks.
 	// k, l - used to cycle through blocks Rkl.
 	int i, j, i1, i2, j1, j2, k1, k2, l1, l2, off, dmin, i0, j0, m0, s0, g0, del_g, sum_dist, dist;
-	R = (int*)malloc(rsize * rsize * sizeof(int));
 	D = (int*)malloc(rsize * rsize * sizeof(int));
-	T = (int*)malloc(rsize * rsize * 5 * sizeof(int));
 	temp = (int*)malloc(rsize * rsize * sizeof(int));
 	temp2 = (int*)malloc(rsize * rsize * sizeof(int));
 	for (int k = 0; k < nd; k++)

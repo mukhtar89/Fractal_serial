@@ -22,12 +22,7 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 	//Begin batch runs
 	int min0 = 100;
 
-	for (int i = 0; i < 2; i++)
-		for (int j = 0; j < 2; j++)
-			cout << "temp " << i << j << " = " << temp[(i * 2 + j)] << "\t";
-
 	//Scale the Domain Blocks
-	M = (int*)malloc(sv * sh * sizeof(int));
 	M1 = (int*)malloc((int)pow(rsize*nd,2) * sizeof(int));
 	temp = (int*)malloc(4 * sizeof(int));
 	for (int i = 0; i < rsize*nd; i++)
@@ -35,17 +30,10 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 		for (int j = 0; j < rsize*nd; j++)
 		{
 			maccess(M, temp, i*2, i*2+1, j*2, j*2+1);
-			/*for (int i = 0; i < 2; i++)
-				for (int j = 0; j < 2; j++)
-					cout << "temp " << i << j << " = " << temp[(i*2 + j)] << "\t";*/
 			M1[((i*rsize*nd) + j)] = mavg(temp);
 		}
 	}
 	free(temp);
-
-	/*for (int i = 0; i < rsize*nd; i++)
-		for (int j = 0; j < rsize*nd; j++)
-			cout << "M1 " << i << j << " = " << M1[(i*rsize*nd + j)] << "\t";*/
 
 	//Matrix of 4 possible scalings to transform grayscale
 	float s[4] = { 0.45, 0.60, 0.80, 1.00 };
@@ -97,7 +85,6 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 	int k1, k2, l1, l2, off, dmin, i0, j0, m0, s0, g0, del_g, sum_dist, dist;
 	R = (int*)malloc(rsize * rsize * sizeof(int));
 	D = (int*)malloc(rsize * rsize * sizeof(int));
-	T = (int*)malloc(nd * nd * 5 * sizeof(int));
 	for (int k = 0; k < nd; k++)
 	{
 		k1 = k*rsize;
