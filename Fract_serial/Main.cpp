@@ -4,9 +4,11 @@
 #include <conio.h>
 #include <fstream>
 #include <malloc.h>
+#include <assert.h>
 
 #include "fenc.h"
 #include "fdec.h"
+
 
 using namespace cv;
 using namespace std;
@@ -43,6 +45,7 @@ int main(int argc, const char** argv)
 			g[k] = int(p[1]);
 			b[k] = int(p[0]);
 			k++;
+			
 		}
 	}
 
@@ -51,9 +54,9 @@ int main(int argc, const char** argv)
 	nd = (sv / rsize) / 2;
 	nr = sv / rsize;
 
-	Tr = (int*)malloc(nd*nd * 5 * sizeof(int));
-	Tb = (int*)malloc(nd*nd * 5 * sizeof(int));
-	Tg = (int*)malloc(nd*nd * 5 * sizeof(int));
+	Tr = (int*)malloc(nr*nr * 5 * sizeof(int));
+	Tb = (int*)malloc(nr*nr * 5 * sizeof(int));
+	Tg = (int*)malloc(nr*nr * 5 * sizeof(int));
 
 	fenc(r, Tr, rsize, nd, nr, sv, sh);
 	fenc(b, Tb, rsize, nd, nr, sv, sh);
@@ -61,7 +64,7 @@ int main(int argc, const char** argv)
 
 	ofstream fout;
 	fout.open("lena.frct");
-	k = nd*nd * 5;
+	k = nr*nr * 5;
 	for (int i = 0; i < k; i++)
 		fout << Tr[i] << ","; //writing ith character of array in the file
 	fout << "|";
@@ -73,19 +76,12 @@ int main(int argc, const char** argv)
 	fout << "|";
 
 	fout.close();
-	free(r);
-	free(b);
-	free(g);
-	free(Tr);
-	free(Tb);
-	free(Tg);
-
-
+	
 	int *r1, *g1, *b1, *Tr1, *Tb1, *Tg1;
 
-	Tr1 = (int*)malloc(nd*nd * 5 * sizeof(int));
-	Tb1 = (int*)malloc(nd*nd * 5 * sizeof(int));
-	Tg1 = (int*)malloc(nd*nd * 5 * sizeof(int));
+	Tr1 = (int*)malloc(nr*nr * 5 * sizeof(int));
+	Tb1 = (int*)malloc(nr*nr * 5 * sizeof(int));
+	Tg1 = (int*)malloc(nr*nr * 5 * sizeof(int));
 	r1 = (int*)malloc(img.total()*sizeof(int));
 	b1 = (int*)malloc(img.total()*sizeof(int));
 	g1 = (int*)malloc(img.total()*sizeof(int));
@@ -126,11 +122,11 @@ int main(int argc, const char** argv)
 		}
 		switch (count)
 		{
-			case 0: Tr1[(i + nd*(j + k * 5))] = atoi(temp);
+			case 0: Tr1[((i*nr + j) * 5 + k)] = atoi(temp);
 					break;
-			case 1: Tb1[(i + nd*(j + k * 5))] = atoi(temp);
+			case 1: Tb1[((i*nr + j) * 5 + k)] = atoi(temp);
 					break;
-			case 2: Tg1[(i + nd*(j + k * 5))] = atoi(temp);
+			case 2: Tg1[((i*nr + j) * 5 + k)] = atoi(temp);
 					break;
 			default: break;
 		}
@@ -140,7 +136,7 @@ int main(int argc, const char** argv)
 			k = 0;
 			j++;
 		}
-		if (j == nd)
+		if (j == nr)
 		{
 			j = 0;
 			i++;
@@ -174,6 +170,12 @@ int main(int argc, const char** argv)
 	free(Tr1);
 	free(Tb1);
 	free(Tg1);
+	free(r);
+	free(b);
+	free(g);
+	free(Tr);
+	free(Tb);
+	free(Tg);
 
 	return 0;
 }

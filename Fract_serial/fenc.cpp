@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <conio.h>
 #include <math.h>
+#include <assert.h>
 #include <malloc.h>
 
 #include "mutil.h"
@@ -17,23 +18,23 @@ M = imread('lena_gray_256.tif');
 
 void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 {
-	int *M1, *temp, *D, *bigM, *temp2, *R;
+	int *M1, *temp, *D, *bigM, *temp2, *R, *temp3, count=0;
 
 	//Begin batch runs
 	int min0 = 100;
 
 	//Scale the Domain Blocks
 	M1 = (int*)malloc((int)pow(rsize*nd,2) * sizeof(int));
-	temp = (int*)malloc(4 * sizeof(int));
+	temp3 = (int*)malloc(4 * sizeof(int));
 	for (int i = 0; i < rsize*nd; i++)
 	{
 		for (int j = 0; j < rsize*nd; j++)
 		{
-			maccess(M, temp, i*2, i*2+1, j*2, j*2+1);
-			M1[((i*rsize*nd) + j)] = mavg(temp);
+			maccess(M, temp3, i * 2, i * 2 + 1, j * 2, j * 2 + 1, sv);
+			M1[((i*rsize*nd) + j)] = mavg(temp3,4);
 		}
 	}
-	free(temp);
+	cout << "M1 created\n";
 
 	//Matrix of 4 possible scalings to transform grayscale
 	float s[4] = { 0.45, 0.60, 0.80, 1.00 };
@@ -44,7 +45,8 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 	temp = (int*)malloc(rsize * rsize * sizeof(int));
 	temp2 = (int*)malloc(rsize * rsize * sizeof(int));
 	D = (int*)malloc(rsize * rsize * sizeof(int));
-	bigM = (int*)malloc((int)pow(nd*rsize,2)*8 * sizeof(int));
+	bigM = (int*)malloc(nd*nd*rsize*rsize*8 * sizeof(int));
+	int g = 0;
 	for (int i = 0; i < nd; i++)
 	{
 		i1 = i*rsize;
@@ -53,48 +55,46 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 		{
 			j1 = j*rsize;
 			j2 = (j + 1)*rsize - 1;
-			maccess(M1, D, i1, i2, j1, j2);
-			msave(D, bigM, i1, i2, j1, j2, 0, 8);
-			rotmat(D, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 1, 8);
-			rotmat(temp, temp2);
-			msave(temp2, bigM, i1, i2, j1, j2, 2, 8);
-			rotmat(temp2, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 3, 8);
-			fliph(D, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 4, 8);
-			flipv(D, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 5, 8);
-			transpose(D, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 6, 8);
-			rotmat(temp, temp2);
-			rotmat(temp2, temp);
-			msave(temp, bigM, i1, i2, j1, j2, 7, 8);
+			maccess(M1, D, i1, i2, j1, j2, rsize*nd);
+			msave(D, bigM, i1, i2, j1, j2, 0, 8, rsize*nd);
+			rotmat(D, temp, rsize*rsize);
+			msave(temp, bigM, i1, i2, j1, j2, 1, 8, rsize*nd);
+			rotmat(temp, temp2, rsize*rsize);
+			msave(temp2, bigM, i1, i2, j1, j2, 2, 8, rsize*nd);
+			rotmat(temp2, temp, rsize*rsize);
+			msave(temp, bigM, i1, i2, j1, j2, 3, 8, rsize*nd);
+			fliph(D, temp, rsize*rsize);
+			msave(temp, bigM, i1, i2, j1, j2, 4, 8, rsize*nd);
+			flipv(D, temp, rsize*rsize);
+			msave(temp, bigM, i1, i2, j1, j2, 5, 8, rsize*nd);
+			transpose(D, temp, rsize*rsize);
+			msave(temp, bigM, i1, i2, j1, j2, 6, 8, rsize*nd);
+			rotmat(temp, temp2, rsize*rsize);
+			rotmat(temp2, temp, rsize*rsize);
+			msave(temp, bigM, i1, i2, j1, j2, 7, 8, rsize*nd);
 		}
 	}
-	//free(D);
+	free(D);
 	cout << "BigM created\n";
-	/*for (int i = 0; i < nd*rsize; i++)
-		for (int j = 0; j < nd*rsize; j++)
-			for (int k = 0; k < 8; k++)
-				cout << "BigM " << i << j << k << " = " << bigM[(i + nd*rsize*(j + 8 * k))] << "\t";*/
+				
 
 
 	// Compare the range blocks and scaled domain blocks.
 	// k, l - used to cycle through blocks Rkl.
-	int k1, k2, l1, l2, off, dmin, i0, j0, m0, s0, g0, del_g, sum_dist, dist;
+	int k1, k2, l1, l2, off, i0, j0, m0, s0, g0, del_g, sum_dist, ming0=256, maxg0=0;
+	float dist, dmin;
 	R = (int*)malloc(rsize * rsize * sizeof(int));
 	D = (int*)malloc(rsize * rsize * sizeof(int));
-	for (int k = 0; k < nd; k++)
+	for (int k = 0; k < nr; k++)
 	{
 		k1 = k*rsize;
 		k2 = (k + 1)*rsize - 1;
-		for (int l = 0; l < nd; l++)
+		for (int l = 0; l < nr; l++)
 		{
 			l1 = l*rsize;
 			l2 = (l + 1)*rsize - 1;
-			maccess(M1, R, k1, k2, l1, l2);
-			off = mavg(R);
+			maccess(M, R, k1, k2, l1, l2, sv);
+			off = mavg(R, rsize*rsize);
 			// Initialize error to large value
 			dmin = (int)pow(10, 6);
 			i0 = 0;
@@ -114,13 +114,13 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 					{
 						for (int m = 0; m < 8; m++)
 						{
-							maccess(bigM, D, i1, i2, j1, j2, m, 8);
-							scale(D, s[n]);
-							del_g = off - mavg(D);
-							increment(D, del_g);
-							diff(R, D, temp);
-							msquare(temp, temp2);
-							sum_dist = msum(temp2);
+							maccess(bigM, D, i1, i2, j1, j2, m, 8, rsize*nd);
+							scale(D, s[n], rsize*rsize);
+							del_g = off - mavg(D, rsize*rsize);
+							increment(D, del_g, rsize*rsize);
+							diff(R, D, temp, rsize*rsize);
+							msquare(temp, temp2, rsize*rsize);
+							sum_dist = msum(temp2, rsize*rsize);
 							dist = sqrt(sum_dist);
 							if (dist < dmin)
 							{
@@ -128,19 +128,24 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 								i0 = i;
 								j0 = j;
 								m0 = m;
-								s0 = s[n];
+								s0 = n;
 								g0 = del_g;
 							}
 						}
 					}
 				}
 			}
-			T[(k + nd*(l + 5 * 0))] = i0;
-			T[(k + nd*(l + 5 * 1))] = j0;
-			T[(k + nd*(l + 5 * 2))] = m0;
-			T[(k + nd*(l + 5 * 3))] = s0;
-			T[(k + nd*(l + 5 * 4))] = g0;
+			T[((k*nr + l) * 5 + 0)] = i0;
+			T[((k*nr + l) * 5 + 1)] = j0;
+			T[((k*nr + l) * 5 + 2)] = m0;
+			T[((k*nr + l) * 5 + 3)] = s0;
+			T[((k*nr + l) * 5 + 4)] = g0+256;
 		}
 	}
 	cout << "T created\n";
+	free(temp);
+	free(temp2);
+	free(D);
+	free(R);
+	free(temp3);
 }

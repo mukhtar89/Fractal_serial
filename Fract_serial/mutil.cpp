@@ -2,133 +2,123 @@
 #include <stdio.h>
 #include <conio.h>
 #include <math.h>
+#include <assert.h>
 
 #include "mutil.h"
 
-void maccess(int *A, int *R, int a1, int a2, int b1, int b2)
+void maccess(int *A, int *R, int a1, int a2, int b1, int b2, int size)
 {
 	for (int a = a1; a <= a2; a++)
 		for (int b = b1; b <= b2; b++)
-			R[((a - a1)*(b2 - b1) + (b - b1))] = A[(a*(b2 - b1) + b)];
+			R[((a - a1)*(b2 - b1 + 1) + (b - b1))] = A[(a*size + b)];
 }
 
-void maccess(int *A, int *R, int a1, int a2, int b1, int b2, int c, int depth)
+void maccess(int *A, int *R, int a1, int a2, int b1, int b2, int c, int depth, int size)
 {
 	for (int a = a1; a <= a2; a++)
 		for (int b = b1; b <= b2; b++)
-			R[((a - a1)*(b2 - b1) + (b - b1))] = A[((a + c*depth)*(b2 - b1) + b)];
+			R[((a - a1)*(b2 - b1 + 1) + (b - b1))] = A[((a*size + b)*depth + c)];
 }
-void msave(int *A, int *R, int a1, int a2, int b1, int b2, int c, int depth)
+void msave(int *A, int *R, int a1, int a2, int b1, int b2, int c, int depth, int size)
 {
 	for (int a = a1; a <= a2; a++)
 		for (int b = b1; b <= b2; b++)
-			R[((a + c*depth)*(b2 - b1) + b)] = A[((a - a1)*(b2 - b1) + (b - b1))];
-}
-
-void msave(int *A, int *R, int a1, int a2, int b1, int b2)
-{
-	for (int a = a1; a <= a2; a++)
-		for (int b = b1; b <= b2; b++)
-			R[(a*(b2 - b1) + b)] = A[((a - a1)*(b2 - b1) + (b - b1))];
+			R[((a*size + b)*depth + c)] = A[((a - a1)*(b2 - b1 + 1) + (b - b1))];
 }
 
-int mavg(int *R)
+void msave(int *A, int *R, int a1, int a2, int b1, int b2, int size)
 {
-	int sum = msum(R);
-	int avg = sum / (sizeof(R)/sizeof(int));
+
+	for (int a = a1; a <= a2; a++)
+		for (int b = b1; b <= b2; b++)
+			R[(a*size + b)] = A[((a - a1)*(b2 - b1 + 1) + (b - b1))];
+}
+
+int mavg(int *R, int size)
+{
+	int sum = msum(R, size);
+	int avg = sum / size;
 	return avg;
 }
 
-void diff(int *A, int *B, int *C) //each element of A-B = C
+void diff(int *A, int *B, int *C, int size) //each element of A-B = C
 {
-	int Msize = sizeof(A) / sizeof(int);
-	Msize = sqrt(Msize);
-	for (int i = 0; i < Msize; i++)
+	for (int i = 0; i < size; i++)
 		C[i] = A[i] - B[i];
 }
 
-void msquare(int *A, int *B) //B = A.^2
+void msquare(int *A, int *B, int size) //B = A.^2
 {
-	int Msize = sizeof(A) / sizeof(int);
-	Msize = sqrt(Msize);
-	for (int i = 0; i < Msize; i++)
+	for (int i = 0; i < size; i++)
 		B[i] = A[i] * A[i];
 }
 
-int msum(int *A) //Sum of all elements of A
+int msum(int *A, int size) //Sum of all elements of A
 {
-	int Msize = sizeof(A) / sizeof(int);
-	Msize = sqrt(Msize);
 	int sum = 0;
-	for (int i = 0; i < Msize; i++)
+	for (int i = 0; i < size; i++)
 		sum+=A[i];
 	return sum;
 }
 
-void ones(int *A, int k)   //initialize Array A with scalar 'k'
+void ones(int *A, int k, int size)   //initialize Array A with scalar 'k'
 {
-	int Msize = sizeof(A) / sizeof(int);
-	Msize = sqrt(Msize);
-	for (int i = 0; i < Msize; i++)
+	for (int i = 0; i < size; i++)
 		A[i] = k;
 }
 
-void matsum(int *A, int *B, int *C)  // add array A + B = C
+void matsum(int *A, int *B, int *C, int size)  // add array A + B = C
 {
-	int Msize = sizeof(A)/sizeof(int);
-	Msize = sqrt(Msize);
-	for (int i = 0; i < Msize; i++)
+	for (int i = 0; i < size; i++)
 		C[i] = A[i] + B[i];
 }
 
-void rotmat(int *D, int *rot)
+void rotmat(int *D, int *rot, int size)
 {
-	int size = sizeof(D) / sizeof(int);
 	int n = sqrt(size);
 	for (int i = 0; i <n ; i++)
 		for (int j = 0; j < n; j++)
 			rot[i*n + j] = D[(n - j - 1)*n + i];
 }
 
-void transpose(int *D, int *rot)
+void transpose(int *D, int *rot, int size)
 {
-	int size = sizeof(D) / sizeof(int);
 	int n = sqrt(size);
 	for (int i = 0; i < n; i++)
 		for (int j = i; j < n; j++)
 			rot[i*n + j] = D[j*n + i];
 }
 
-void flipv(int *D, int *rot)
+void flipv(int *D, int *rot, int size)
 {
-	int size = sizeof(D) / sizeof(int);
 	int n = sqrt(size);
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < n; j++)
-			rot[i*n + j] = D[i*n + n - j + 1];
+			rot[i*n + j] = D[i*n + n - j - 1];
 }
 
-void fliph(int *D, int *rot)
+void fliph(int *D, int *rot, int size)
 {
-	int size = sizeof(D) / sizeof(int);
 	int n = sqrt(size);
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < n; j++)
-			rot[i*n + j] = D[(n - i + 1)*n + j];
+			rot[i*n + j] = D[(n - i - 1)*n + j];
 }
 
-void scale(int *D, float k)
+void scale(int *D, float k, int size)
 {
-	int Msize = sizeof(D) / sizeof(int);
-	Msize = sqrt(Msize);
-	for (int i = 0; i < Msize; i++)
+	for (int i = 0; i < size; i++)
 		D[i] = D[i] * k;
 }
 
-void increment(int *D, float k)
+void increment(int *D, float k, int size)
 {
-	int Msize = sizeof(D) / sizeof(int);
-	Msize = sqrt(Msize);
-	for (int i = 0; i < Msize; i++)
+	for (int i = 0; i < size; i++)
 		D[i] = D[i] + k;
+}
+
+void matcpy(int *A, int *B, int size)
+{
+	for (int i = 0; i < size; i++)
+		A[i] = B[i];
 }
