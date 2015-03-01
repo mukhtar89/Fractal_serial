@@ -15,7 +15,7 @@ using namespace std;
 
 int main(int argc, const char** argv)
 {
-	Mat img = imread("lena.BMP", CV_LOAD_IMAGE_UNCHANGED);
+	Mat img = imread("lena256.BMP", CV_LOAD_IMAGE_UNCHANGED);
 	if (img.data == NULL)
 	{
 		cout << "Image cannot be loaded..!!" << endl;
@@ -63,17 +63,17 @@ int main(int argc, const char** argv)
 	fenc(g, Tg, rsize, nd, nr, sv, sh);
 
 	ofstream fout;
-	fout.open("lena.frct");
+	fout.open("lena256.frct");
 	k = nr*nr * 5;
 	for (int i = 0; i < k; i++)
-		fout << Tr[i] << ","; //writing ith character of array in the file
-	fout << "|";
+		fout << Tr[i] << " "; //writing ith character of array in the file
+	fout << "\n";
 	for (int i = 0; i < k; i++)
-		fout << Tb[i] << ","; //writing ith character of array in the file
-	fout << "|";
+		fout << Tb[i] << " "; //writing ith character of array in the file
+	fout << "\n";
 	for (int i = 0; i < k; i++)
-		fout << Tg[i] << ","; //writing ith character of array in the file
-	fout << "|";
+		fout << Tg[i] << " "; //writing ith character of array in the file
+	fout << "\n";
 
 	fout.close();
 	
@@ -87,59 +87,38 @@ int main(int argc, const char** argv)
 	g1 = (int*)malloc(img.total()*sizeof(int));
 
 	ifstream fin;
-	fin.open("lena.frct");
-	int pos_temp;
-	char temp[3] = {};
-	char t = '0';
-	count = 0;
-	int i = 0;
-	int j = 0;
-	k = 0;
+	fin.open("lena256.frct");
+	string line;
+	int value;
 
-	while (!fin.eof())
+	k = 0;
+	if (getline(fin, line))
 	{
-		t = fin.get();
-		if (t == '|')
+		std::istringstream iss(line);
+		while (iss >> value)
 		{
-			count++;
-			cout << "Counts = " << count << "\n";
-			if (count != 3)
-				t = fin.get();
-			i = 0;
-			j = 0;
-			k = 0;
+			Tr1[k] = value;
+			k++;
 		}
-		if (count == 3)
-			continue;
-		pos_temp = 0;
-		for (int i = 0; i < 3; i++)
-			temp[i] = 0;
-		while (t != ',')
+	}
+	k = 0;
+	if (getline(fin, line))
+	{
+		std::istringstream iss(line);
+		while (iss >> value)
 		{
-			temp[pos_temp] = t;
-			pos_temp++;
-			t = fin.get();
+			Tb1[k] = value;
+			k++;
 		}
-		switch (count)
+	}
+	k = 0;
+	if (getline(fin, line))
+	{
+		std::istringstream iss(line);
+		while (iss >> value)
 		{
-			case 0: Tr1[((i*nr + j) * 5 + k)] = atoi(temp);
-					break;
-			case 1: Tb1[((i*nr + j) * 5 + k)] = atoi(temp);
-					break;
-			case 2: Tg1[((i*nr + j) * 5 + k)] = atoi(temp);
-					break;
-			default: break;
-		}
-		k++;
-		if (k == 5)
-		{
-			k = 0;
-			j++;
-		}
-		if (j == nr)
-		{
-			j = 0;
-			i++;
+			Tg1[k] = value;
+			k++;
 		}
 	}
 
