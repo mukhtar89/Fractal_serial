@@ -139,7 +139,7 @@ void fenc(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 			T[((k*nr + l) * 5 + 1)] = j0;
 			T[((k*nr + l) * 5 + 2)] = m0;
 			T[((k*nr + l) * 5 + 3)] = s0;
-			T[((k*nr + l) * 5 + 4)] = g0+256;
+			T[((k*nr + l) * 5 + 4)] = g0;
 		}
 	}
 	cout << "T created\n";

@@ -9,13 +9,15 @@
 #include "fenc.h"
 #include "fdec.h"
 
+#define IMAGE "lena256.BMP"
+#define FILE "lena256.frct"
 
 using namespace cv;
 using namespace std;
 
 int main(int argc, const char** argv)
 {
-	Mat img = imread("lena256.BMP", CV_LOAD_IMAGE_UNCHANGED);
+	Mat img = imread(IMAGE, CV_LOAD_IMAGE_UNCHANGED);
 	if (img.data == NULL)
 	{
 		cout << "Image cannot be loaded..!!" << endl;
@@ -63,7 +65,7 @@ int main(int argc, const char** argv)
 	fenc(g, Tg, rsize, nd, nr, sv, sh);
 
 	ofstream fout;
-	fout.open("lena256.frct");
+	fout.open(FILE);
 	k = nr*nr * 5;
 	for (int i = 0; i < k; i++)
 		fout << Tr[i] << " "; //writing ith character of array in the file
@@ -87,7 +89,7 @@ int main(int argc, const char** argv)
 	g1 = (int*)malloc(img.total()*sizeof(int));
 
 	ifstream fin;
-	fin.open("lena256.frct");
+	fin.open(FILE);
 	string line;
 	int value;
 

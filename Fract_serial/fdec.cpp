@@ -63,7 +63,7 @@ void fdec(int *M, int *T, int rsize, int nd, int nr, int sv, int sh)
 				j0 = T[((k*nr + l) * 5 + 1)];
 				m0 = T[((k*nr + l) * 5 + 2)];
 				s0 = T[((k*nr + l) * 5 + 3)];
-				g0 = T[((k*nr + l) * 5 + 4)]-256;
+				g0 = T[((k*nr + l) * 5 + 4)];
 				i1 = i0*rsize;
 				i2 = (i0 + 1)*rsize - 1;
 				j1 = j0*rsize;
